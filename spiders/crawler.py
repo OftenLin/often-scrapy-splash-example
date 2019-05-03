@@ -9,7 +9,7 @@ import os
 from items import FscFinanicalDictionaryItem
 
 
-
+CHROME_DRIVER_PATH = '<your chromedriver path>'
 class ToScrapeSpiderXPath(Spider):
     name = 'fsc_financial_project'
     start_urls = ['https://www.fsc.gov.tw/ch/home.jsp?id=178&parentpath=0,6&mcustomize=bilingual_list.jsp']
@@ -21,7 +21,7 @@ class ToScrapeSpiderXPath(Spider):
         'Cookie':'HttpOnly; cookiesession1=59F531CCSYUK9GPQDATIRXKLPN9UB47B; HttpOnly',
         'Upgrade-Insecure-Requests':'1',
     }
-    chrome_driver_path = '<your chromedriver path>'
+    
 
     def parse(self, response):
         for url in self.start_urls:
@@ -40,7 +40,7 @@ class ToScrapeSpiderXPath(Spider):
             all_items.append(item)
 
 
-        driver = webdriver.Chrome(chrome_driver_path)
+        driver = webdriver.Chrome(CHROME_DRIVER_PATH)
         driver.get(response.url)
         time.sleep(1)
         for page in range(2, total_page+1):
