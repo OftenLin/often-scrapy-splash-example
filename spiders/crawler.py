@@ -55,6 +55,9 @@ class ToScrapeSpiderXPath(Spider):
                 item['source'] = row.find_element_by_xpath('.//div[@class="bisource_con"]').text
                 all_items.append(item)
 
+        self.get_csv(all_items)
+
+    def get_csv(self, all_items):
         with open('fsc_financial_dictionary.csv', 'w', encoding='big5') as outfile:
             writer = csv.writer(outfile, lineterminator='\n')
             csv_header_list = ['編號', '分類', '中文詞彙', '英文詞彙', '資料來源']
@@ -66,4 +69,3 @@ class ToScrapeSpiderXPath(Spider):
                 item['chinese'].replace('倂', '併') if '倂' in item['chinese'] else item['chinese'],
                 item['english'],
                 item['source']])
-           
