@@ -14,6 +14,7 @@ BOT_NAME = 'fsc_finanical_dictionary'
 SPIDER_MODULES = ['fsc_finanical_dictionary.spiders']
 NEWSPIDER_MODULE = 'fsc_finanical_dictionary.spiders'
 
+SPLASH_URL = 'http://127.0.0.1:8050'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'fsc_finanical_dictionary (+http://www.yourdomain.com)'
