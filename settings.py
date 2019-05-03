@@ -15,7 +15,7 @@ SPIDER_MODULES = ['fsc_finanical_dictionary.spiders']
 NEWSPIDER_MODULE = 'fsc_finanical_dictionary.spiders'
 
 #SPLASH EXTRA SETTING
-SPLASH_URL = 'http://127.0.0.1:8050'
+SPLASH_URL = 'http://192.168.99.100:8050/'
 DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
