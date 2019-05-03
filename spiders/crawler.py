@@ -7,7 +7,7 @@ import csv
 import os
 
 from items import FscFinanicalDictionaryItem
-
+from scrapy_splash import SplashRequest
 
 CHROME_DRIVER_PATH = '<your chromedriver path>'
 class ToScrapeSpiderXPath(Spider):
@@ -22,14 +22,19 @@ class ToScrapeSpiderXPath(Spider):
         'Upgrade-Insecure-Requests':'1',
     }
     
+    all_items = []
+    get_total_page_done = False
+    total_page = 0
 
     def parse(self, response):
         for url in self.start_urls:
             yield Request(url, headers=self.headers, callback=self.test)
 
     def test(self, response):
-        all_items = []
-        total_page = int(response.xpath(".//span[@class='page']/text()").get().split('/')[1].strip())
+        if not self.get_total_page_done:
+            self.total_page = int(response.xpath(".//span[@class='page']/text()").get().split('/')[1].strip())
+            self.get_total_page_done = True
+
         for row in response.xpath('.//div[@class="whitebackground7"]'):
             item = FscFinanicalDictionaryItem()
             item['order_num'] = row.xpath('.//div[@class="bicode_con"]/text()').extract_first()
@@ -37,25 +42,20 @@ class ToScrapeSpiderXPath(Spider):
             item['chinese'] = row.xpath('.//div[@class="bich_name_con"]/text()').extract_first()
             item['english'] = row.xpath('.//div[@class="bien_name_con"]/text()').extract_first()
             item['source'] = row.xpath('.//div[@class="bisource_con"]/text()').extract_first()
-            all_items.append(item)
+            self.all_items.append(item)
 
 
-        driver = webdriver.Chrome(CHROME_DRIVER_PATH)
-        driver.get(response.url)
-        time.sleep(1)
-        for page in range(2, total_page+1):
-            driver.execute_script('list(%s)' % page)
-            time.sleep(0.5)
-            for row in driver.find_elements_by_xpath('.//div[@class="whitebackground7"]'):
-                item = FscFinanicalDictionaryItem()
-                item['order_num'] = row.find_element_by_xpath('.//div[@class="bicode_con"]').text
-                item['category'] = row.find_element_by_xpath('.//div[@class="bitype_con"]').text
-                item['chinese'] = row.find_element_by_xpath('.//div[@class="bich_name_con"]').text
-                item['english'] = row.find_element_by_xpath('.//div[@class="bien_name_con"]').text
-                item['source'] = row.find_element_by_xpath('.//div[@class="bisource_con"]').text
-                all_items.append(item)
+        for page in range(2, self.total_page+1):
+            yield SplashRequest(
+                response.url,
+                self.test,
+                endpoint='render.html',
+                args={
+                    'js_source': 'list(%s)' % page
+                }
+            )
 
-        self.get_csv(all_items)
+        self.get_csv(self.all_items)
 
     def get_csv(self, all_items):
         with open('fsc_financial_dictionary.csv', 'w', encoding='big5') as outfile:
