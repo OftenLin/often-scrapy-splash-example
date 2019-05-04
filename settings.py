@@ -14,6 +14,9 @@ BOT_NAME = 'fsc_finanical_dictionary'
 SPIDER_MODULES = ['fsc_finanical_dictionary.spiders']
 NEWSPIDER_MODULE = 'fsc_finanical_dictionary.spiders'
 
+#SPLASH EXTRA SETTING
+SPLASH_URL = 'http://192.168.99.100:8050/'
+DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'fsc_finanical_dictionary (+http://www.yourdomain.com)'
@@ -46,15 +49,17 @@ ROBOTSTXT_OBEY = False
 
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
-#SPIDER_MIDDLEWARES = {
-#    'fsc_finanical_dictionary.middlewares.FscFinanicalDictionarySpiderMiddleware': 543,
-#}
+SPIDER_MIDDLEWARES = {
+    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
+}
 
 # Enable or disable downloader middlewares
 # See https://doc.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'fsc_finanical_dictionary.middlewares.FscFinanicalDictionaryDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+    'scrapy_splash.SplashCookiesMiddleware': 723,
+    'scrapy_splash.SplashMiddleware': 725,
+    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
+}
 
 # Enable or disable extensions
 # See https://doc.scrapy.org/en/latest/topics/extensions.html
@@ -87,4 +92,4 @@ ROBOTSTXT_OBEY = False
 #HTTPCACHE_EXPIRATION_SECS = 0
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
-#HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+HTTPCACHE_STORAGE = 'scrapy_splash.SplashAwareFSCacheStorage'
